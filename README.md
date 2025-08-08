@@ -1,2 +1,2 @@
 # Sorting_Visualizer_Project
-This repository consists of a sorting visualizer project I'm working on to improve my data structure &amp; algorithm skills with a couple of visualization elements to it.
+This is a Python project that I'm working on which should be able to visually show how data is sorted using merge sort, quick sort, and bubble sort algorithms using arrays, classes, and complex functions.
