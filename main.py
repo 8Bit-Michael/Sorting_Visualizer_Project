@@ -1,5 +1,4 @@
 import tkinter as tk
-import algorithms
 import config
 import utils
 import visualizer
@@ -53,6 +52,7 @@ def create_main_window():
     cursor='hand1',
     font=('Arial', 16, 'bold')
     )
+    bubble_sort_button.configure(command=start_sorting)
 
     merge_sort_button.place(x=10, y=210)
 
@@ -115,6 +115,7 @@ def create_main_window():
     arr_text.place(x=20, y=430)
     arr_slider.place(x=10, y=450)
 
+    global speed_slider
     speed_slider = tk.Scale(root, from_=0, to=100, orient=tk.HORIZONTAL, command=speed_value)
     speed_slider.pack()
     speed_text = tk.Label(root, text="Speed", font=('Arial', 12))
@@ -131,5 +132,16 @@ def on_generate_array_click():
     canvas = tk.Canvas(root, width=400, height=250, bg='white')
     canvas.place(x=400, y=100)
     visualizer.draw_array(canvas, array, ['black'] * array_length)
+    return array
 
+def start_sorting(): # Use later to implement different sorting algorithms.
+    import algorithms
+    array = on_generate_array_click()
+    canvas = tk.Canvas(root, width=400, height=250, bg='white')
+    canvas.place(x=400, y=100)
+    speed = speed_slider.get() / 100
+    sorted_array = algorithms.bubble_sort(array, canvas, speed)
+    visualizer.draw_array(canvas, sorted_array, ['black'] * len(sorted_array))
+
+create_main_window()
 create_main_window()
