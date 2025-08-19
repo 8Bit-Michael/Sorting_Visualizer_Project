@@ -1,9 +1,3 @@
-import tkinter as tk
-import config
-import utils
-import visualizer
-import random
-
 def arr_value(val):
     print(f"Array value: {val}")
 
@@ -11,7 +5,7 @@ def speed_value(val):
     print(f"Speed value: {val}")
 
 def create_main_window():
-    
+    import tkinter as tk
     # Describes the purpose of the script:
     global root
     root = tk.Tk()
@@ -35,6 +29,7 @@ def create_main_window():
     cursor='hand1',
     font=('Arial', 16, 'bold')
     )
+    bubble_sort_button.configure(command=bubble_sort_vis)
 
     bubble_sort_button.place(x=10, y=110)
 
@@ -52,7 +47,7 @@ def create_main_window():
     cursor='hand1',
     font=('Arial', 16, 'bold')
     )
-    bubble_sort_button.configure(command=start_sorting)
+    merge_sort_button.configure(command=merge_sort_vis)
 
     merge_sort_button.place(x=10, y=210)
 
@@ -72,6 +67,7 @@ def create_main_window():
     )
 
     quick_sort_button.place(x=10, y=310)
+    quick_sort_button.configure(command=quick_sort_vis)
 
     start_button = tk.Button(
     root, 
@@ -126,15 +122,21 @@ def create_main_window():
     root.mainloop()
 
 def on_generate_array_click():
+    import tkinter as tk
+    import visualizer
+    import utils
     array_length = arr_slider.get()
     array = utils.generate_array(0, 100, array_length)
     # The start, the maximum value, and the length of the array.
     canvas = tk.Canvas(root, width=400, height=250, bg='white')
     canvas.place(x=400, y=100)
-    visualizer.draw_array(canvas, array, ['black'] * array_length)
+    color_array = visualizer.get_color_array(array_length, status='unsorted', active_indices=[])
+    visualizer.draw_array(canvas, array, color_array)
     return array
 
-def start_sorting(): # Use later to implement different sorting algorithms.
+def bubble_sort_vis():
+    import tkinter as tk
+    import visualizer
     import algorithms
     array = on_generate_array_click()
     canvas = tk.Canvas(root, width=400, height=250, bg='white')
@@ -143,5 +145,26 @@ def start_sorting(): # Use later to implement different sorting algorithms.
     sorted_array = algorithms.bubble_sort(array, canvas, speed)
     visualizer.draw_array(canvas, sorted_array, ['black'] * len(sorted_array))
 
-create_main_window()
+def merge_sort_vis():
+    import tkinter as tk
+    import visualizer
+    import algorithms
+    array = on_generate_array_click()
+    canvas = tk.Canvas(root, width=400, height=250, bg='white')
+    canvas.place(x=400, y=100)
+    speed = speed_slider.get() / 100
+    sorted_array = algorithms.merge_sort(array, 0, len(array) - 1, canvas, speed) # Returning None (possibly not getting the chance to run fully)
+    visualizer.draw_array(canvas, sorted_array, ['black'] * len(sorted_array))
+
+def quick_sort_vis():
+    import tkinter as tk
+    import visualizer
+    import algorithms
+    array = on_generate_array_click()
+    canvas = tk.Canvas(root, width=400, height=250, bg='white')
+    canvas.place(x=400, y=100)
+    speed = speed_slider.get() / 100
+    sorted_array = algorithms.quick_sort(array, 0, len(array) - 1, speed, canvas)
+    visualizer.draw_array(canvas, sorted_array, ['black'] * len(sorted_array))
+
 create_main_window()
