@@ -29,7 +29,7 @@ def merge_sort(array, start, end, canvas, speed):
         if start == 0 and end == len(array) - 1:
             print("Sorted array:", array)
             return array
-
+            
 def merge(array, start, mid, end, canvas, speed):
     import time
     import visualizer
@@ -87,41 +87,40 @@ def merge(array, start, mid, end, canvas, speed):
         j += 1
         k += 1
         
-# Only does one iteration, but does work effectively:
+def quick_sort(array, low, high, canvas, speed):
+    if low < high:
+        pi = partition(array, low, high, canvas, speed)
+        quick_sort(array, low, pi - 1, canvas, speed)
+        quick_sort(array, pi + 1, high, canvas, speed)
+    # After sorting, print and return the sorted array if it's the top-level call:
+    if low == 0 and high == len(array) - 1: # In the end the element with the highest value the index
+        print("Sorted array:", array)       # should be the length of the array minus one and the
+        return array                        # lowest value should be index 0.                  
 
-def quick_sort(array, low, high, speed, canvas):
+def partition(array, low, high, canvas, speed):
     import time
-    import visualizer 
+    import visualizer
 
-    if len(array) <= 1:
-        return array
-        
-    else:
-        min = 0
-        high = []
-        low = []
-        while min < len(high) and min < len(low):
-            pivot = array.pop() # Delete the value at the end of the sequence and assign it to a variable called pivot.
-            
-            for i in array:
-                if i > pivot:
-                    high.append(i)
-                    time.sleep(speed)
-                    color_array = [
-                        'green' if x == i else ('red' if x == pivot else 'black')
-                        for x in range(len(array))
-                    ]
-                    visualizer.draw_array(canvas, array, color_array)
-                else:
-                    low.append(i)
-                    color_array = [
-                        'green' if x == i else ('red' if x == pivot else 'black')
-                        for x in range(len(array))
-                    ]
-                    visualizer.draw_array(canvas, array, color_array)
-    # All the code gets skipped and the array is immedietly run.
-    print('Sorted array:', array)
-    return array
-    
+    pivot = array[high]
+    i = low - 1
+    for j in range(low, high):
+        if array[j] < pivot:
+            i += 1
+            array[i], array[j] = array[j], array[i]
+            time.sleep(speed)
+            color_array = [
+                'green' if x == i or x == j else ('red' if x == high else 'black')
+                for x in range(len(array))
+            ]
+            visualizer.draw_array(canvas, array, color_array)
+    array[i + 1], array[high] = array[high], array[i + 1]
+    time.sleep(speed)
+    color_array = [
+        'green' if x == i + 1 or x == high else 'black'
+        for x in range(len(array))
+    ]
+    visualizer.draw_array(canvas, array, color_array)
+    return i + 1
+
 import main
 array = main.on_generate_array_click()
