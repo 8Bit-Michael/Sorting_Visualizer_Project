@@ -65,26 +65,9 @@ def create_main_window():
     cursor='hand1',
     font=('Arial', 16, 'bold')
     )
-
-    quick_sort_button.place(x=10, y=310)
     quick_sort_button.configure(command=quick_sort_vis)
 
-    start_button = tk.Button(
-    root, 
-    background="black", 
-    foreground="white", 
-    activebackground="Blue", 
-    text="Start",
-    highlightthickness=2,
-    highlightcolor="White",
-    width=7,
-    height=1,
-    border=0,
-    cursor='hand1',
-    font=('Arial', 16, 'bold')
-    )
-
-    start_button.place(x=10, y=380)
+    quick_sort_button.place(x=10, y=310)
 
     gen_array_button = tk.Button(
     root, 
@@ -94,15 +77,26 @@ def create_main_window():
     text="Generate array",
     highlightthickness=2,
     highlightcolor="White",
-    width=16,
+    width=15,
     height=1,
     border=0,
     cursor='hand1',
     font=('Arial', 16, 'bold')
     )
-
-    gen_array_button.place(x=120, y=380)
     gen_array_button.configure(command=on_generate_array_click)
+
+    gen_array_button.place(x=10, y=370)
+
+    global custom_array_box
+    custom_array_box = tk.Text(
+    root, 
+    width = 23,
+    height = 2.4
+    )
+    custom_arr_title = tk.Label(root, text='Custom array', font=('Arial', 11))
+    custom_arr_title.place(x=260, y=350)
+    
+    custom_array_box.place(x=220, y=373)
 
     global arr_slider
     arr_slider = tk.Scale(root, from_=0, to=100, orient=tk.HORIZONTAL, command=arr_value)
@@ -121,19 +115,23 @@ def create_main_window():
     # Runs the script:
     root.mainloop()
 
+# array_length will be retrieved inside functions after arr_slider is created.
+
 def on_generate_array_click():
     import tkinter as tk
     import visualizer
     import utils
     array_length = arr_slider.get()
-    array = utils.generate_array(0, 100, array_length)
-    # The start, the maximum value, and the length of the array.
-    canvas = tk.Canvas(root, width=400, height=250, bg='white')
-    canvas.place(x=400, y=100)
-    color_array = visualizer.get_color_array(array_length, status='unsorted', active_indices=[])
-    visualizer.draw_array(canvas, array, color_array)
-    return array
-
+    if array_length < 2:
+        utils.arr_error_window()
+    else:
+        array = utils.generate_array(0, 100, array_length)
+        # The start, the maximum value, and the length of the array.
+        canvas = tk.Canvas(root, width=400, height=250, bg='white')
+        canvas.place(x=400, y=100)
+        color_array = visualizer.get_color_array(array_length, status='unsorted', active_indices=[])
+        visualizer.draw_array(canvas, array, color_array)
+        return array
 def bubble_sort_vis():
     import tkinter as tk
     import visualizer
@@ -142,20 +140,27 @@ def bubble_sort_vis():
     canvas = tk.Canvas(root, width=400, height=250, bg='white')
     canvas.place(x=400, y=100)
     speed = speed_slider.get() / 100
-    sorted_array = algorithms.bubble_sort(array, canvas, speed)
-    visualizer.draw_array(canvas, sorted_array, ['black'] * len(sorted_array))
-
+    array_length = arr_slider.get()
+    if array_length > 2:
+        sorted_array = algorithms.bubble_sort(array, canvas, speed)
+        visualizer.draw_array(canvas, sorted_array, ['black'] * len(sorted_array))
+    else:
+        raise ValueError("The array should have two or more elements.")
 def merge_sort_vis():
     import tkinter as tk
     import visualizer
     import algorithms
+    import utils
     array = on_generate_array_click()
     canvas = tk.Canvas(root, width=400, height=250, bg='white')
     canvas.place(x=400, y=100)
     speed = speed_slider.get() / 100
-    sorted_array = algorithms.merge_sort(array, 0, len(array) - 1, canvas, speed) # Returning None (possibly not getting the chance to run fully)
-    visualizer.draw_array(canvas, sorted_array, ['black'] * len(sorted_array))
-
+    array_length = arr_slider.get()
+    if array_length > 2:
+        sorted_array = algorithms.merge_sort(array, 0, len(array) - 1, canvas, speed)
+        visualizer.draw_array(canvas, sorted_array, ['black'] * len(sorted_array))
+    else:
+        raise ValueError("The array should have two or more elements.")
 def quick_sort_vis():
     import tkinter as tk
     import visualizer
@@ -164,7 +169,16 @@ def quick_sort_vis():
     canvas = tk.Canvas(root, width=400, height=250, bg='white')
     canvas.place(x=400, y=100)
     speed = speed_slider.get() / 100
-    sorted_array = algorithms.quick_sort(array, 0, len(array) - 1, speed, canvas)
-    visualizer.draw_array(canvas, sorted_array, ['black'] * len(sorted_array))
+    array_length = arr_slider.get()
+    # Note: quick_sort only returns the sorted array at the top-level call.
+    if array_length > 2:
+        sorted_array = algorithms.quick_sort(array, 0, len(array) - 1, canvas, speed)
+        if sorted_array is None:   
+            sorted_array = array
+        visualizer.draw_array(canvas, sorted_array, ['black'] * len(sorted_array))
+    elif array_length < 2:
+        visualizer.draw_array(canvas, sorted_array, ['black'] * len(sorted_array))
+    else:
+        raise ValueError("The array should have two or more elements.")
 
 create_main_window()
