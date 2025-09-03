@@ -8,6 +8,7 @@ def create_main_window():
     import tkinter as tk
     # Describes the purpose of the script:
     global root
+    global active
     root = tk.Tk()
     root.geometry("800x500")
     root.title("Sorting Visualizer")
@@ -87,17 +88,6 @@ def create_main_window():
 
     gen_array_button.place(x=10, y=370)
 
-    global custom_array_box
-    custom_array_box = tk.Text(
-    root, 
-    width = 23,
-    height = 2.4
-    )
-    custom_arr_title = tk.Label(root, text='Custom array', font=('Arial', 11))
-    custom_arr_title.place(x=260, y=350)
-    
-    custom_array_box.place(x=220, y=373)
-
     global arr_slider
     arr_slider = tk.Scale(root, from_=0, to=100, orient=tk.HORIZONTAL, command=arr_value)
     arr_slider.pack()
@@ -121,7 +111,12 @@ def on_generate_array_click():
     import tkinter as tk
     import visualizer
     import utils
-    array_length = arr_slider.get()
+    try:
+        array_length = arr_slider.get()
+    except NameError:
+        print('Error: arr_slider is not defined.')
+        return
+    
     if array_length < 2:
         utils.arr_error_window()
     else:
@@ -146,6 +141,7 @@ def bubble_sort_vis():
         visualizer.draw_array(canvas, sorted_array, ['black'] * len(sorted_array))
     else:
         raise ValueError("The array should have two or more elements.")
+    
 def merge_sort_vis():
     import tkinter as tk
     import visualizer
@@ -181,4 +177,5 @@ def quick_sort_vis():
     else:
         raise ValueError("The array should have two or more elements.")
 
-create_main_window()
+if __name__ == '__main__':
+    create_main_window()
